@@ -1,55 +1,5 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Theme toggle
-  const themeBtn = document.getElementById("themeBtn");
-
-  if (themeBtn) {
-    themeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-
-      const isDark = document.body.classList.contains("dark-mode");
-      themeBtn.textContent = isDark ? "☀️" : "🌙";
-    });
-  }
-
-  // Share website
-  const shareBtn = document.getElementById("shareBtn");
-
-  if (shareBtn) {
-    shareBtn.addEventListener("click", async () => {
-      const url = window.location.href;
-
-      try {
-        await navigator.clipboard.writeText(url);
-        shareBtn.textContent = "✓ Link copied!";
-
-        setTimeout(() => {
-          shareBtn.textContent = "Share";
-        }, 2000);
-      } catch (error) {
-        alert("Portfolio link: " + url);
-      }
-    });
-  }
-
-  // Portfolio link
-  const portfolioLink = document.getElementById("portfolioLink");
-
-  if (portfolioLink) {
-    portfolioLink.addEventListener("click", () => {
-      alert("Welcome to my portfolio!");
-    });
-  }
-
-  // Automatic copyright year
-  const yearElement = document.getElementById("year");
-
-  if (yearElement) {
-    yearElement.textContent = new Date().getFullYear();
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
   // =========================
@@ -58,16 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeBtn = document.getElementById("themeBtn");
 
   if (themeBtn) {
+    const storedTheme = localStorage.getItem("theme");
+    const startInLightMode =
+      storedTheme === "light" ||
+      (!storedTheme && window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches);
+
+    document.body.classList.toggle("light", startInLightMode);
+    themeBtn.textContent = startInLightMode ? "☾" : "☀";
+    themeBtn.setAttribute(
+      "aria-label",
+      startInLightMode ? "Switch to dark mode" : "Switch to light mode"
+    );
+
     themeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
+      const isLightMode = document.body.classList.toggle("light");
+      localStorage.setItem("theme", isLightMode ? "light" : "dark");
 
-      const isDarkMode =
-        document.body.classList.contains("dark-mode");
-
-      themeBtn.textContent = isDarkMode ? "☀️" : "🌙";
+      themeBtn.textContent = isLightMode ? "☾" : "☀";
       themeBtn.setAttribute(
         "aria-label",
-        isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+        isLightMode ? "Switch to dark mode" : "Switch to light mode"
       );
     });
   }
@@ -80,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (shareBtn) {
     shareBtn.addEventListener("click", async () => {
       const portfolioUrl = window.location.href;
+      const oldText = shareBtn.textContent;
 
       try {
         if (navigator.share) {
@@ -88,9 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
             url: portfolioUrl
           });
         } else {
-          await navigator.clipboard.writeText(portfolioUrl);
+          if (!navigator.clipboard) {
+            throw new Error("Clipboard API unavailable");
+          }
 
-          const oldText = shareBtn.textContent;
+          await navigator.clipboard.writeText(portfolioUrl);
           shareBtn.textContent = "✓ Link copied!";
 
           setTimeout(() => {
@@ -99,29 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.log("Sharing cancelled or unavailable:", error);
+        if (error.name !== "AbortError") {
+          window.prompt("Copy this page link:", portfolioUrl);
+        }
       }
     });
-  }
-
-  // =========================
-  // Portfolio Link
-  // =========================
-  const portfolioLink = document.getElementById("portfolioLink");
-
-  if (portfolioLink) {
-    portfolioLink.addEventListener("click", (event) => {
-      // Keep the normal link behavior
-      console.log("Portfolio link clicked");
-    });
-  }
-
-  // =========================
-  // Automatic Copyright Year
-  // =========================
-  const yearElement = document.getElementById("year");
-
-  if (yearElement) {
-    yearElement.textContent = new Date().getFullYear();
   }
 
   // =========================
