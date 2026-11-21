@@ -1,0 +1,1 @@
+Linkora One Piece-inspired starter\n\nOpen index.html in your browser.\nReplace KL with your profile image or initials.\nEdit the social URLs in index.html.\nThis is a static prototype; authentication and dashboard can be added next.\n
