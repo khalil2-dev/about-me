@@ -1,34 +1,50 @@
 
-const themeBtn = document.getElementById('themeBtn');
+document.addEventListener("DOMContentLoaded", () => {
+  // Theme toggle
+  const themeBtn = document.getElementById("themeBtn");
 
-if (themeBtn) {
-  themeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light');
-    themeBtn.textContent = document.body.classList.contains('light') ? '☀' : '☾';
-  });
-}
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
 
-const shareBtn = document.getElementById('shareBtn');
+      const isDark = document.body.classList.contains("dark-mode");
+      themeBtn.textContent = isDark ? "☀️" : "🌙";
+    });
+  }
 
-if (shareBtn) {
-  shareBtn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(location.href);
-      shareBtn.textContent = '✓ Link copied!';
-    } catch {
-      alert('Copy this page URL from your browser.');
-    }
-  });
-}
+  // Share website
+  const shareBtn = document.getElementById("shareBtn");
 
-const portfolioLink = document.getElementById('portfolioLink');
+  if (shareBtn) {
+    shareBtn.addEventListener("click", async () => {
+      const url = window.location.href;
 
-if (portfolioLink) {
-  portfolioLink.addEventListener('click', e => {
-    e.preventDefault();
-    alert('Add your portfolio URL in index.html');
-  });
-}
+      try {
+        await navigator.clipboard.writeText(url);
+        shareBtn.textContent = "✓ Link copied!";
 
-document.getElementById('year')?.textContent = new Date().getFullYear();
+        setTimeout(() => {
+          shareBtn.textContent = "Share";
+        }, 2000);
+      } catch (error) {
+        alert("Portfolio link: " + url);
+      }
+    });
+  }
 
+  // Portfolio link
+  const portfolioLink = document.getElementById("portfolioLink");
+
+  if (portfolioLink) {
+    portfolioLink.addEventListener("click", () => {
+      alert("Welcome to my portfolio!");
+    });
+  }
+
+  // Automatic copyright year
+  const yearElement = document.getElementById("year");
+
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
+});
